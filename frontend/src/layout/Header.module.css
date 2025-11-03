@@ -26,6 +26,15 @@
   gap: var(--space-md);
 }
 
+.logo {
+  display: block;
+  height: 40px;
+  width: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
