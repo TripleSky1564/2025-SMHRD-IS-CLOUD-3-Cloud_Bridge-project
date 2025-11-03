@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { AppLayout } from './layout/AppLayout'
 import { HomePage } from './pages/Home/HomePage'
 import { ServiceDetailPage } from './pages/ServiceDetail/ServiceDetailPage'
+import DocumentChecklistPage from './components/chatbot/DocumentChecklistPage'
 
 const router = createBrowserRouter([
   {
@@ -10,6 +11,7 @@ const router = createBrowserRouter([
       { path: '/', element: <HomePage /> },
       { path: '/services/:serviceId', element: <ServiceDetailPage /> },
       { path: '*', element: <HomePage /> },
+      { path: '/services/:serviceId/checklist', element: <DocumentChecklistPage /> },
     ],
   },
 ])

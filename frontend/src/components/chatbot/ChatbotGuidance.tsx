@@ -1,5 +1,6 @@
 import type { ServiceGuidance, ServiceGuidanceDetail } from '../../types/guidance'
 import styles from './ChatbotGuidance.module.css'
+import { Link, useNavigate } from 'react-router-dom'
 
 type GuidanceStatus = 'idle' | 'success' | 'not-found'
 
@@ -20,6 +21,7 @@ export const ChatbotGuidance = ({
   onReset,
   onSelectSuggestion,
 }: ChatbotGuidanceProps) => {
+  const navigate = useNavigate()
   if (status === 'idle') {
     return (
       <div className={styles.placeholder}>
@@ -38,8 +40,8 @@ export const ChatbotGuidance = ({
       <div className={styles.empty}>
         <h3>해당 민원 정보를 찾을 수 없습니다</h3>
         <p>
-          <strong>{query}</strong>와(과) 비슷한 공공복지 민원 정보를 찾을 수 없었습니다. 다른
-          표현으로 다시 검색해 보시겠어요?
+          <strong>{query}</strong>와(과) 비슷한 공공복지 민원 정보를 찾을 수 없었습니다.
+          다른 표현으로 다시 검색해 보시겠어요?
         </p>
         <button type="button" onClick={onReset} className={styles.resetButton}>
           다른 민원 검색하기
@@ -50,12 +52,12 @@ export const ChatbotGuidance = ({
 
   if (!detail) return null
 
-  const documentNameMap = new Map(detail.documentChecklistDetails.map((doc) => [doc.id, doc.name]))
+  const documentNameMap = new Map(
+    detail.documentChecklistDetails.map((doc) => [doc.id, doc.name]),
+  )
 
   const formatDocumentList = (documentIds: string[] = []) =>
-    documentIds
-      .map((id) => documentNameMap.get(id) ?? id)
-      .join(', ')
+    documentIds.map((id) => documentNameMap.get(id) ?? id).join(', ')
 
   return (
     <div className={styles.result}>
@@ -115,6 +117,12 @@ export const ChatbotGuidance = ({
             ))}
           </ol>
         </article>
+        <button
+          type="button"
+          onClick={() => navigate(`/services/${detail.id}/checklist`)}
+        >
+          필수 서류 체크리스트 안내
+        </button>
       </section>
 
       <section className={styles.section}>
