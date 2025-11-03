@@ -6,6 +6,7 @@ import { Header } from './Header'
 import { AccessibilityContext } from './AccessibilityContext'
 import type { TextScale } from './AccessibilityContext'
 import { AccessibilityControls } from '../components/accessibility/AccessibilityControls'
+import { SectionOptionBar } from '../components/navigation/SectionOptionBar'
 
 const fontSizeMap: Record<TextScale, string> = {
   standard: '16px',
@@ -49,6 +50,20 @@ export const AppLayout = () => {
     [textScale, highContrast],
   )
 
+  // Measure header height for sticky option bar offset
+  useEffect(() => {
+    const header = document.querySelector('#site-header, header') as HTMLElement | null
+    const setHeaderH = () => {
+      if (!header) return
+      const h = Math.round(header.getBoundingClientRect().height)
+      if (h) document.documentElement.style.setProperty('--header-h', `${h}px`)
+    }
+    setHeaderH()
+    const ro = new ResizeObserver(setHeaderH)
+    if (header) ro.observe(header)
+    return () => ro.disconnect()
+  }, [])
+
   return (
     <AccessibilityContext.Provider value={accessibilityValue}>
       <div className={styles.appShell}>
@@ -57,7 +72,12 @@ export const AppLayout = () => {
         </a>
         <Header />
         <div className={styles.accessibilityBar}>
-          <AccessibilityControls />
+          <div style={{display:'flex',gap:'12px',maxWidth:1080, width:'100%', alignItems:'center'}}>
+            <div style={{flex:1}}>
+              <SectionOptionBar />
+            </div>
+            <AccessibilityControls />
+          </div>
         </div>
         <main id="main-content" className={styles.main}>
           <div className={styles.contentRegion}>

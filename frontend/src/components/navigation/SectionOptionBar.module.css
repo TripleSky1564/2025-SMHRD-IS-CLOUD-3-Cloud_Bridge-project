@@ -1,0 +1,28 @@
+/* Horizontal options bar under header */
+.bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.chip {
+  -webkit-appearance: none;
+  appearance: none;
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #333;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.chip[aria-selected="true"] {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+

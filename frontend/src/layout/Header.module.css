@@ -7,6 +7,9 @@
   color: #fff;
   padding: var(--space-md) var(--space-md);
   box-shadow: var(--shadow-subtle);
+  position: sticky;
+  top: 0;
+  z-index: 1100;
 }
 
 .container {

@@ -22,6 +22,9 @@
   padding: var(--space-sm) var(--space-md);
   display: flex;
   justify-content: center;
+  position: sticky;
+  top: var(--header-h, 0px);
+  z-index: 100;
 }
 
 @media (min-width: 768px) {
