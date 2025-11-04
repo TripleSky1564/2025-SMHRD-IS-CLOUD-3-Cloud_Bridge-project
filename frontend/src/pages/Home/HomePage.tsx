@@ -10,11 +10,12 @@ import {
 } from '../../utils/guidanceSearch'
 import type { ServiceGuidanceDetail } from '../../types/guidance'
 import styles from './HomePage.module.css'
-import { RightNavRail } from '../../components/navigation/RightNavRail'
 
 type ChatbotStatus = 'idle' | 'success' | 'not-found'
 
 export const HomePage = () => {
+  // 랜딩 화면에서도 즉시 안내가 보이도록 챗봇 위젯과 동일한 상태를 가집니다.
+  // 상태 구조를 바꾸면 ChatbotWidget.tsx와 동기화 로직이 달라질 수 있으니 함께 수정하세요.
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState<ChatbotStatus>('idle')
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null)
@@ -63,7 +64,8 @@ export const HomePage = () => {
 
   return (
     <div className={styles.page}>
-      <RightNavRail />
+      {/* 히어로 영역: 서비스 소개와 챗봇 섹션으로 이동하는 링크를 제공합니다.
+          텍스트나 강조 색상을 바꾸려면 HomePage.module.css와 함께 조정하세요. */}
       <section className={styles.hero}>
         <div>
           <p className={styles.sectionLabel}>공공복지 안내</p>
@@ -83,6 +85,8 @@ export const HomePage = () => {
         </div>
       </section>
 
+      {/* 챗봇 구간: 페이지 이동 없이 민원 안내 흐름을 체험할 수 있습니다.
+          이곳의 배치를 변경하면 챗봇 위젯과 내용이 중복되지 않도록 주의하세요. */}
       <section
         id="chatbot"
         data-section
@@ -113,6 +117,8 @@ export const HomePage = () => {
         />
       </section>
 
+      {/* 생애주기 섹션: 관련 서비스로 빠르게 이동할 수 있는 카테고리를 보여줍니다.
+          카테고리 순서를 수정하려면 guidanceContent.categories 데이터를 업데이트하세요. */}
       <section
         id="life-events"
         data-section
@@ -131,4 +137,3 @@ export const HomePage = () => {
 }
 
 export default HomePage
-

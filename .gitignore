@@ -32,3 +32,6 @@ frontend/.vite/
 
 # Misc
 *.cache
+
+# Codex CLI session artifacts
+.codex/

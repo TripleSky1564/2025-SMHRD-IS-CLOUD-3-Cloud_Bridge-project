@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getServiceDetail } from '../../utils/guidanceSearch'
 import styles from './DocumentChecklistPage.module.css'

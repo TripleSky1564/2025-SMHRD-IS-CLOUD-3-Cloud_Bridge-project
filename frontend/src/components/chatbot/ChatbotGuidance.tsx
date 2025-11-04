@@ -1,6 +1,6 @@
 import type { ServiceGuidance, ServiceGuidanceDetail } from '../../types/guidance'
 import styles from './ChatbotGuidance.module.css'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 type GuidanceStatus = 'idle' | 'success' | 'not-found'
 
