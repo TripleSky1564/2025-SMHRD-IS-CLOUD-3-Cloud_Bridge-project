@@ -15,6 +15,11 @@
   border-color: rgba(75, 164, 230, 0.4);
 }
 
+.active {
+  border-color: var(--color-primary-sky);
+  box-shadow: var(--shadow-medium);
+}
+
 .title {
   margin: 0;
   font-size: var(--font-size-lg);
@@ -36,6 +41,12 @@
 .link {
   font-weight: 600;
   color: var(--color-primary-sky-dark);
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
 }
 
 .link:hover,

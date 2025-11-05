@@ -7,15 +7,25 @@ import styles from './CategoryGrid.module.css'
 type CategoryGridProps = {
   categories: Category[]
   services: ServiceGuidance[]
+  onSelectService?: (serviceId: string) => void
+  selectedServiceId?: string | null
 }
 
 const getServicesForCategory = (category: Category, services: ServiceGuidance[]) =>
   services.filter((service) => category.serviceIds.includes(service.id))
 
-export const CategoryGrid = ({ categories, services }: CategoryGridProps) => (
+export const CategoryGrid = ({
+  categories,
+  services,
+  onSelectService,
+  selectedServiceId,
+}: CategoryGridProps) => (
   <Grid columns="three" gap="lg">
     {categories.map((category) => {
       const categoryServices = getServicesForCategory(category, services)
+      const firstServiceId = categoryServices[0]?.id
+      const isCategoryActive =
+        selectedServiceId != null && category.serviceIds.includes(selectedServiceId)
       return (
         <article
           key={category.id}
@@ -28,14 +38,35 @@ export const CategoryGrid = ({ categories, services }: CategoryGridProps) => (
           </header>
           <div className={styles.services}>
             {categoryServices.map((service) => (
-              <ServiceSummaryCard key={service.id} service={service} variant="compact" />
+              <ServiceSummaryCard
+                key={service.id}
+                service={service}
+                variant="compact"
+                onSelect={onSelectService}
+                isActive={selectedServiceId === service.id}
+              />
             ))}
           </div>
           {categoryServices.length > 0 && (
             <footer className={styles.footer}>
-              <Link to={`/services/${categoryServices[0].id}`} className={styles.viewAll}>
-                전체 안내 보기
-              </Link>
+              {onSelectService && firstServiceId ? (
+                <button
+                  type="button"
+                  className={styles.viewAll}
+                  onClick={() => {
+                    const targetId =
+                      isCategoryActive && selectedServiceId ? selectedServiceId : firstServiceId
+                    if (targetId) onSelectService(targetId)
+                  }}
+                  aria-pressed={isCategoryActive}
+                >
+                  {isCategoryActive ? '열람 중 · 접기' : '대표 안내 펼치기'}
+                </button>
+              ) : (
+                <Link to={`/services/${categoryServices[0].id}`} className={styles.viewAll}>
+                  전체 안내 보기
+                </Link>
+              )}
             </footer>
           )}
         </article>
