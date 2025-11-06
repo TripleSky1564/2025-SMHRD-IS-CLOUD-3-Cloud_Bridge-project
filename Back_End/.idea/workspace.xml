@@ -32,6 +32,13 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -57,6 +64,8 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Gradle.Back_End [:com.cloudbridge.CloudBridgeApplication.main()].executor": "Run",
+    "Gradle.Back_End 빌드.executor": "Run",
     "Gradle.DbConnectionTest.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -71,6 +80,26 @@
     "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="CloudBridgeApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.cloudbridge.CloudBridgeApplication" />
+      <module name="Back_End.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.cloudbridge.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="애플리케이션.CloudBridgeApplication" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
       <changelist id="e8ab9907-342c-49de-aaa2-afb15692ba51" name="변경" comment="" />
