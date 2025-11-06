@@ -6,7 +6,6 @@ import { Header } from './Header'
 import { AccessibilityContext } from './AccessibilityContext'
 import type { TextScale } from './AccessibilityContext'
 // 접근성 컨트롤 UI 제거
-import { SectionOptionBar } from '../components/navigation/SectionOptionBar'
 import { ChatbotWidget } from '../components/chatbot/ChatbotWidget'
 
 const fontSizeMap: Record<TextScale, string> = {
@@ -79,13 +78,7 @@ export const AppLayout = () => {
         <Header />
         {/* 섹션 이동 탭 등 공용 퀵 액션을 담는 고정 바입니다.
             새 위젯을 붙이고 싶다면 이 div 내부에 컴포넌트를 추가하세요. */}
-        <div className={styles.accessibilityBar}>
-          <div style={{display:'flex',gap:'12px',maxWidth:1080, width:'100%', alignItems:'center'}}>
-            <div style={{flex:1}}>
-              <SectionOptionBar />
-            </div>
-          </div>
-        </div>
+
         <main id="main-content" className={styles.main}>
           <div className={styles.contentRegion}>
             <Outlet />

@@ -24,8 +24,8 @@ export const Header = () => {
           </div>
         </div>
         <nav aria-label="주요 메뉴" className={styles.nav}>
-          <a href="#chatbot">챗봇 안내</a>
-          <a href="#life-events">생애주기별 서비스</a>
+          <a href="#chatbot"></a>
+          <a href="#life-events"></a>
         </nav>
         <div className={styles.authControls}>
           {user ? (

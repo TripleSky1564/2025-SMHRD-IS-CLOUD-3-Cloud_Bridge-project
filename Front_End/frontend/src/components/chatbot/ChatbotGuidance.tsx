@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import type { ServiceGuidance, ServiceGuidanceDetail } from '../../types/guidance'
+import type { ServiceGuidanceDetail } from '../../types/guidance'
 import styles from './ChatbotGuidance.module.css'
 
 type GuidanceStatus = 'idle' | 'success' | 'not-found'
@@ -8,9 +8,7 @@ type ChatbotGuidanceProps = {
   status: GuidanceStatus
   query: string
   detail: ServiceGuidanceDetail | null
-  suggestions: ServiceGuidance[]
   onReset: () => void
-  onSelectSuggestion: (serviceId: string) => void
 }
 
 // NOTE: 메인 화면에 정적으로 노출되는 챗봇 안내 카드 컴포넌트입니다.
@@ -19,9 +17,7 @@ export const ChatbotGuidance = ({
   status,
   query,
   detail,
-  suggestions,
   onReset,
-  onSelectSuggestion,
 }: ChatbotGuidanceProps) => {
   const navigate = useNavigate()
   if (status === 'idle') {
@@ -134,61 +130,8 @@ export const ChatbotGuidance = ({
         </div>
       </section>
 
-      <section className={styles.section}>
-        <h3>필수 서류 체크리스트</h3>
-        <div className={styles.documentList}>
-          {detail.documentChecklistDetails.map((document) => (
-            <article key={document.id}>
-              <h5>{document.name}</h5>
-              <p className={styles.documentMeta}>{document.issuingAuthority}</p>
-              <p>발급 방법: {document.availableFormats.join(', ')}</p>
-              {document.downloadUrl && (
-                <a href={document.downloadUrl} target="_blank" rel="noreferrer">
-                  온라인 발급 바로가기
-                </a>
-              )}
-              {document.preparationNotes && <p>{document.preparationNotes}</p>}
-            </article>
-          ))}
-        </div>
-      </section>
+      
 
-      <section className={styles.section}>
-        <h3>상담 및 방문 안내</h3>
-        <div className={styles.channelList}>
-          {detail.supportChannelDetails.map((channel) => (
-            <article key={channel.id}>
-              <h5>{channel.name}</h5>
-              <p className={styles.documentMeta}>{channel.type}</p>
-              {channel.address && <p>{channel.address}</p>}
-              {channel.hours && <p>운영시간 {channel.hours}</p>}
-              <p>{channel.contact}</p>
-              {channel.notes && <p>{channel.notes}</p>}
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {suggestions.length > 1 && (
-        <section className={styles.section}>
-          <h3>다른 안내도 확인해 보세요</h3>
-          <ul className={styles.suggestionList}>
-            {suggestions
-              .filter((service) => service.id !== detail.id)
-              .map((service) => (
-                <li key={service.id}>
-                  <button
-                    type="button"
-                    onClick={() => onSelectSuggestion(service.id)}
-                    className={styles.optionButton}
-                  >
-                    {service.title}
-                  </button>
-                </li>
-              ))}
-          </ul>
-        </section>
-      )}
     </div>
   )
 }

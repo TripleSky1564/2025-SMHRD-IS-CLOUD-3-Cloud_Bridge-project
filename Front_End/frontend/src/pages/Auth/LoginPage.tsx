@@ -2,11 +2,8 @@ import { type FormEvent, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import styles from './AuthPage.module.css'
 import { useAuth } from '../../context/AuthContext'
-import {
-  createVerificationCode,
-  isValidPhoneNumber,
-  normalizePhoneNumber,
-} from '../../utils/phoneVerification'
+import { isValidPhoneNumber, normalizePhoneNumber } from '../../utils/phoneVerification'
+import { postJson } from '../../utils/api'
 
 type Alert = { type: 'success' | 'error'; text: string }
 
@@ -21,6 +18,7 @@ export const LoginPage = () => {
   const [alert, setAlert] = useState<Alert | null>(null)
   const [verified, setVerified] = useState(false)
   const [isSubmitting, setSubmitting] = useState(false)
+  const [isRequestingCode, setRequestingCode] = useState(false)
 
   // 이미 로그인 상태라면 안내 메시지와 함께 홈으로 돌려보냅니다.
   useEffect(() => {
@@ -37,7 +35,7 @@ export const LoginPage = () => {
     setVerified(false)
   }
 
-  const handleSendCode = () => {
+  const handleSendCode = async () => {
     if (!registeredProfile) {
       setAlert({ type: 'error', text: '먼저 회원가입을 진행해주세요.' })
       return
@@ -67,26 +65,48 @@ export const LoginPage = () => {
       return
     }
 
-    const code = createVerificationCode()
-    setIssuedCode(code)
-    setInputCode('')
-    setVerified(false)
-    setAlert({ type: 'success', text: `인증번호가 발송됐어요. (시연용 코드: ${code})` })
+    try {
+      setRequestingCode(true)
+      const response = await postJson<{ message: string; demoCode?: string }>(
+        '/auth/phone/request',
+        { name: trimmedName, phone: normalizedPhone },
+      )
+      setIssuedCode('requested')
+      setInputCode('')
+      setVerified(false)
+      setAlert({
+        type: 'success',
+        text: `${response.message}${
+          response.demoCode ? ` (시연용 코드: ${response.demoCode})` : ''
+        }`,
+      })
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : '인증번호 발송 과정에서 문제가 발생했습니다.'
+      setAlert({ type: 'error', text: message })
+    } finally {
+      setRequestingCode(false)
+    }
   }
 
-  const handleVerifyCode = () => {
+  const handleVerifyCode = async () => {
     if (!issuedCode) {
       setAlert({ type: 'error', text: '먼저 인증번호를 발송해주세요.' })
       return
     }
-    if (issuedCode !== inputCode.trim()) {
-      setAlert({ type: 'error', text: '인증번호가 일치하지 않습니다.' })
-      setVerified(false)
-      return
-    }
 
-    setVerified(true)
-    setAlert({ type: 'success', text: '휴대전화 인증이 완료되었습니다.' })
+    try {
+      await postJson<{ message: string }>('/auth/phone/verify', {
+        phone: normalizePhoneNumber(phone),
+        code: inputCode.trim(),
+      })
+      setVerified(true)
+      setAlert({ type: 'success', text: '휴대전화 인증이 완료되었습니다.' })
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '인증번호가 일치하지 않습니다.'
+      setVerified(false)
+      setAlert({ type: 'error', text: message })
+    }
   }
 
   const handleSubmit = (event: FormEvent) => {
@@ -180,7 +200,7 @@ export const LoginPage = () => {
               type="button"
               className={styles.button}
               onClick={handleSendCode}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isRequestingCode}
             >
               인증번호 발송
             </button>
