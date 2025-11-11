@@ -14,6 +14,7 @@ const DocumentChecklistPage = () => {
   // 해당 민원 상세(문서 목록 포함). 항상 존재한다고 가정 → non-null 단언
   const detail = useMemo(() => getServiceDetail(id)!, [id])
   const docs = detail.documentChecklistDetails
+  const mapContainerId = `service-map-${id}`
 
   // 각 민원별로 체크 상태를 localStorage에 보존
   const storageKey = `checklist:${id}`
@@ -62,7 +63,7 @@ const DocumentChecklistPage = () => {
       </header>
 
       {/* 표 기반 체크리스트 */}
-      <section>
+      <section className={styles.section}>
         <table className={styles.table}>
           <thead>
             <tr>
@@ -111,6 +112,38 @@ const DocumentChecklistPage = () => {
             })}
           </tbody>
         </table>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionHeading}>
+          <h2>상담 및 방문 안내</h2>
+          
+        </div>
+        <div className={styles.supportGrid}>
+          <div className={styles.mapPanel}>
+            <h3>가까운 관공서</h3>
+            <div
+              id={mapContainerId}
+              className={styles.mapFrame}
+              aria-label="관공서 위치 지도 영역"
+            >
+              {/* TODO: 지도 API 연동 시 이 컨테이너에 지도를 그려주세요. */}
+              <span>지도 API 연동 준비 중입니다.</span>
+            </div>
+          </div>
+          <div className={styles.supportList}>
+            {detail.supportChannelDetails.map((channel) => (
+              <article key={channel.id} className={styles.supportCard}>
+                <h3>{channel.name}</h3>
+                <p className={styles.metaText}>{channel.type}</p>
+                {channel.address && <p>{channel.address}</p>}
+                {channel.hours && <p>운영시간 {channel.hours}</p>}
+                {channel.contact && <p>문의 {channel.contact}</p>}
+                {channel.notes && <p>{channel.notes}</p>}
+              </article>
+            ))}
+          </div>
+        </div>
       </section>
     </div>
   )

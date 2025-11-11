@@ -2,11 +2,8 @@ import { type FormEvent, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import styles from './AuthPage.module.css'
 import { useAuth } from '../../context/AuthContext'
-import {
-  createVerificationCode,
-  isValidPhoneNumber,
-  normalizePhoneNumber,
-} from '../../utils/phoneVerification'
+import { isValidPhoneNumber, normalizePhoneNumber } from '../../utils/phoneVerification'
+import { postJson } from '../../utils/api'
 
 type Alert = { type: 'success' | 'error'; text: string }
 
@@ -21,6 +18,7 @@ export const SignupPage = () => {
   const [verified, setVerified] = useState(false)
   const [alert, setAlert] = useState<Alert | null>(null)
   const [isSubmitting, setSubmitting] = useState(false)
+  const [isRequestingCode, setRequestingCode] = useState(false)
 
   // 회원가입을 새로 시작하면 기존 인증 상태는 초기화합니다.
   const resetVerificationState = () => {
@@ -29,7 +27,7 @@ export const SignupPage = () => {
     setVerified(false)
   }
 
-  const handleSendCode = () => {
+  const handleSendCode = async () => {
     const normalizedPhone = normalizePhoneNumber(phone)
     if (!name.trim()) {
       setAlert({ type: 'error', text: '이름을 먼저 입력해주세요.' })
@@ -40,29 +38,49 @@ export const SignupPage = () => {
       return
     }
 
-    const code = createVerificationCode()
-    setIssuedCode(code)
-    setInputCode('')
-    setVerified(false)
-    setAlert({
-      type: 'success',
-      text: `인증번호를 발송했어요. (시연용 코드: ${code})`,
-    })
+    try {
+      setRequestingCode(true)
+      // 백엔드(Spring Boot)에서 실제 문자 발송과 코드 저장을 담당합니다.
+      const response = await postJson<{ message: string; demoCode?: string }>(
+        '/auth/phone/request',
+        { name: name.trim(), phone: normalizedPhone },
+      )
+      setIssuedCode('requested') // 코드 값 대신 요청만 했다는 상태를 저장합니다.
+      setInputCode('')
+      setVerified(false)
+      setAlert({
+        type: 'success',
+        text: `${response.message}${
+          response.demoCode ? ` (시연용 코드: ${response.demoCode})` : ''
+        }`,
+      })
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '인증번호 발송에 실패했습니다.'
+      setAlert({ type: 'error', text: message })
+    } finally {
+      setRequestingCode(false)
+    }
   }
 
-  const handleVerifyCode = () => {
+  const handleVerifyCode = async () => {
     if (!issuedCode) {
       setAlert({ type: 'error', text: '먼저 인증번호를 발송해주세요.' })
       return
     }
-    if (issuedCode !== inputCode.trim()) {
-      setAlert({ type: 'error', text: '인증번호가 일치하지 않습니다.' })
-      setVerified(false)
-      return
-    }
 
-    setVerified(true)
-    setAlert({ type: 'success', text: '휴대전화 인증이 완료되었습니다.' })
+    try {
+      const normalizedPhone = normalizePhoneNumber(phone)
+      await postJson<{ message: string }>('/auth/phone/verify', {
+        phone: normalizedPhone,
+        code: inputCode.trim(),
+      })
+      setVerified(true)
+      setAlert({ type: 'success', text: '휴대전화 인증이 완료되었습니다.' })
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '인증번호가 일치하지 않습니다.'
+      setVerified(false)
+      setAlert({ type: 'error', text: message })
+    }
   }
 
   const handleSubmit = (event: FormEvent) => {
@@ -146,7 +164,9 @@ export const SignupPage = () => {
               placeholder="예) 01012345678"
               autoComplete="tel-national"
             />
-            <p className={styles.helper}>숫자만 입력해주세요. 실제 문자 발송 대신 코드가 안내됩니다.</p>
+            <p className={styles.helper}>
+              숫자만 입력해주세요. 실제 서비스에서는 휴대전화로 문자가 발송됩니다.
+            </p>
           </label>
 
           <div className={styles.field}>
@@ -154,7 +174,7 @@ export const SignupPage = () => {
               type="button"
               className={styles.button}
               onClick={handleSendCode}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isRequestingCode}
             >
               인증번호 발송
             </button>

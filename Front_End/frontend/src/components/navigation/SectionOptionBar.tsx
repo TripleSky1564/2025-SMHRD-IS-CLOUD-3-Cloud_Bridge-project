@@ -75,4 +75,3 @@ export const SectionOptionBar = () => {
 }
 
 export default SectionOptionBar
-

@@ -6,9 +6,3 @@ export const normalizePhoneNumber = (value: string) => value.replace(/\D/g, '')
 
 // 국내 휴대전화 번호인지 검사합니다. 숫자만 남긴 값으로 정규식을 확인합니다.
 export const isValidPhoneNumber = (value: string) => KOREAN_PHONE_PATTERN.test(normalizePhoneNumber(value))
-
-// 인증번호는 6자리 난수로 생성합니다.
-export const createVerificationCode = () => {
-  const code = Math.floor(100000 + Math.random() * 900000)
-  return String(code)
-}
